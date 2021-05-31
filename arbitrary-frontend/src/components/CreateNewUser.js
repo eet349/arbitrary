@@ -2,29 +2,22 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import logo from '../assets/logo.png';
 
-const Login = (props) => {
+const CreateNewUser = (props) => {
 	const [credentials, setCredentials] = useState({
 		username: '',
 		password: '',
+        primaryemail: ''
 	});
 
-	const login = (e) => {
+	const createNewUser = (e) => {
 		e.preventDefault();
 		axios
 			.post(
-				// "https://jrmmba-foundation.herokuapp.com/login",
-				'http://localhost:2019/login',
-				`grant_type=password&username=${credentials.username}&password=${credentials.password}`,
-				{
-					headers: {
-						// btoa is converting our client id/client secret into base64
-						Authorization: `Basic ${btoa('lambda-client:lambda-secret')}`,
-						'Content-Type': 'application/x-www-form-urlencoded',
-					},
-				}
+				'http://localhost:2019/createnewuser',
+			credentials
 			)
 			.then((res) => {
-				console.log(res.data);
+				// console.log(res.data);
 				localStorage.setItem('token', res.data.access_token);
 				props.history.push('/userinfo');
 			});
@@ -39,8 +32,8 @@ const Login = (props) => {
 	return (
 		<>
 			<img src={logo} alt='' />
-			<h2> Please login.</h2>
-			<form onSubmit={login}>
+			<h2> Please register.</h2>
+			<form onSubmit={createNewUser}>
 				<label>
 					Username:
 					<input
@@ -59,14 +52,24 @@ const Login = (props) => {
 						onChange={handleChange}
 					/>
 				</label>
+                <label>
+					Email:
+					<input
+						type='email'
+						name='primaryemail'
+						value={credentials.primaryemail}
+						onChange={handleChange}
+					/>
+				</label>
 				<br />
-				<button>Log in</button>
-				<p>Don't have an account? 
-					<a href='#' onClick={() => props.setShowLogin(false)}>Register</a>
+				<button>Register</button>
+                <p>Already have an account? 
+					<a href='#' onClick={() => props.setShowLogin(true)}>Log in</a>
 				</p>
+
 			</form>
 		</>
 	);
 };
 
-export default Login;
+export default CreateNewUser;
