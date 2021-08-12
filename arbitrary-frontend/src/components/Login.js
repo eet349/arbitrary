@@ -1,18 +1,21 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import logo from '../assets/logo.png';
+import convert from 'xml-js';
+import { useHistory } from 'react-router-dom';
+import { axiosWithAuth } from './axiosWithAuth';
 
 const Login = (props) => {
 	const [credentials, setCredentials] = useState({
 		username: '',
 		password: '',
 	});
+	const history = useHistory();
+	// const [hotResponse, setHotResponse] = useState();
 
 	const login = (e) => {
 		e.preventDefault();
 		axios
 			.post(
-				// "https://jrmmba-foundation.herokuapp.com/login",
 				'http://localhost:2019/login',
 				`grant_type=password&username=${credentials.username}&password=${credentials.password}`,
 				{
@@ -26,8 +29,29 @@ const Login = (props) => {
 			.then((res) => {
 				console.log(res.data);
 				localStorage.setItem('token', res.data.access_token);
-				props.history.push('/userinfo');
-			});
+				axios
+					.get('https://api.geekdo.com/xmlapi2/hot?type=boardgame')
+					.then((res) => {
+						let convertedRes = convert.xml2json(res.data, {
+							compact: true,
+							spaces: 4,
+						});
+
+						props.setHotResponse(JSON.parse(convertedRes).items.item);
+					});
+				axiosWithAuth()
+					.get('/users/getuserinfo')
+					.then((res) => {
+						console.log('get user info: ', res.data);
+						props.setUserData(res.data);
+					})
+					.catch((err) => {
+						debugger;
+						// console.log('error: ', err);
+					});
+				history.push('/userinfo');
+			})
+			.catch((err) => console.log('err: ', err.message));
 	};
 
 	const handleChange = (e) =>
@@ -38,7 +62,7 @@ const Login = (props) => {
 
 	return (
 		<>
-			<img src={logo} alt='' />
+			{/* <img src={logo} alt='' /> */}
 			<h2> Please login.</h2>
 			<form onSubmit={login}>
 				<label>
