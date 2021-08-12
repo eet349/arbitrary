@@ -75,7 +75,7 @@ const Login = (props) => {
 					/>
 				</label>
 				<label>
-					password:
+					Password:
 					<input
 						type='password'
 						name='password'
@@ -85,6 +85,9 @@ const Login = (props) => {
 				</label>
 				<br />
 				<button>Log in</button>
+				<p>Don't have an account? 
+					<a href='#' onClick={() => props.setShowLogin(false)}>Register</a>
+				</p>
 			</form>
 		</>
 	);
