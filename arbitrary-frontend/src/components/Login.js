@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import convert from 'xml-js';
 import { useHistory } from 'react-router-dom';
-import { axiosWithAuth } from './axiosWithAuth';
+import { axiosWithAuth } from '../utils/axiosWithAuth';
 
 const Login = (props) => {
 	const [credentials, setCredentials] = useState({
@@ -10,7 +10,6 @@ const Login = (props) => {
 		password: '',
 	});
 	const history = useHistory();
-	// const [hotResponse, setHotResponse] = useState();
 
 	const login = (e) => {
 		e.preventDefault();
@@ -27,7 +26,7 @@ const Login = (props) => {
 				}
 			)
 			.then((res) => {
-				console.log(res.data);
+				// console.log(res.data);
 				localStorage.setItem('token', res.data.access_token);
 				axios
 					.get('https://api.geekdo.com/xmlapi2/hot?type=boardgame')
@@ -42,16 +41,16 @@ const Login = (props) => {
 				axiosWithAuth()
 					.get('/users/getuserinfo')
 					.then((res) => {
-						console.log('get user info: ', res.data);
 						props.setUserData(res.data);
 					})
 					.catch((err) => {
 						debugger;
-						// console.log('error: ', err);
 					});
-				history.push('/userinfo');
+				history.push('/home');
 			})
-			.catch((err) => console.log('err: ', err.message));
+			.catch((err) => {
+				debugger;
+			});
 	};
 
 	const handleChange = (e) =>
@@ -62,7 +61,6 @@ const Login = (props) => {
 
 	return (
 		<>
-			{/* <img src={logo} alt='' /> */}
 			<h2> Please login.</h2>
 			<form onSubmit={login}>
 				<label>
@@ -85,8 +83,11 @@ const Login = (props) => {
 				</label>
 				<br />
 				<button>Log in</button>
-				<p>Don't have an account? 
-					<a href='#' onClick={() => props.setShowLogin(false)}>Register</a>
+				<p>
+					Don't have an account?
+					<a href='/register' onClick={() => props.setShowLogin(false)}>
+						Register
+					</a>
 				</p>
 			</form>
 		</>

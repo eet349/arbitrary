@@ -2,38 +2,62 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import convert from 'xml-js';
 
+import StyledCards from './StyledCards/StyledCards';
+
+import './StyledCards/StyledCardContainer.css';
+
 const SearchResults = (props) => {
-	const [gloomhavenTest, setGloomhavenTest] = useState({});
+	const [resultThumbnails, setResultThumbnails] = useState({});
 
 	useEffect(() => {
-		// Just testing out what info we can get from the /thing api route. Using gloomhaven to test the data that comes back
-		axios
-			.get(`https://api.geekdo.com/xmlapi2/thing?id=174430&pagesize=10&page=1`)
-			.then((res) => {
-				let convertedRes = convert.xml2js(res.data, {
+		fetchThumbnails();
+	}, [props.searchResults]);
+
+	const fetchThumbnails = () => {
+		// make the call, and add it to the list
+		let promiseArray = props.searchResults.map((result) => {
+			return axios.get(
+				`https://api.geekdo.com/xmlapi2/thing?id=${result._attributes.id}`
+			);
+		});
+		Promise.all(promiseArray).then((values) => {
+			let convertedValues = {};
+
+			values.forEach((value) => {
+				let convertedRes = convert.xml2js(value.data, {
 					compact: true,
 					spaces: 4,
 				});
-				console.log('res gloomhaven: ', convertedRes.items.item);
-				setGloomhavenTest(convertedRes.items.item);
-			})
-			.catch((err) => {
-				debugger;
+				console.log('convertedRes: ', convertedRes);
+				convertedValues = {
+					...convertedValues,
+					[convertedRes.items.item._attributes.id]:
+						convertedRes.items.item.thumbnail?._text,
+				};
+				setResultThumbnails(convertedValues);
 			});
-	}, []);
+		});
+	};
 
 	const renderResultsList = () => {
-		return props.searchResults?.map((result) => {
-			console.log('result: ', result);
+		return props.searchResults.map((result) => {
 			return (
-				<li key={result._attributes.id}>{result.name._attributes.value}</li>
+				<StyledCards
+					add // Adds an add button when rendering the card
+					key={result?._attributes?.id}
+					cardInfo={{
+						name: result?.name?._attributes?.value,
+						id: result?._attributes?.id,
+					}}
+					thumbnail={resultThumbnails[result?._attributes?.id]}
+				/>
 			);
 		});
 	};
 
 	return (
-		<div>
-			<ul>{renderResultsList()}</ul>
+		<div className='styled-card-container'>
+			{resultThumbnails && renderResultsList()}
 		</div>
 	);
 };

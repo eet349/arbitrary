@@ -4,9 +4,9 @@ import convert from 'xml-js';
 
 const Search = (props) => {
 	const [searchQueryText, setSearchQueryText] = useState('');
+
 	const searchSubmit = (e) => {
 		e.preventDefault();
-		// `https://api.geekdo.com/xmlapi2/search?query=${searchQueryText}`
 		axios
 			.get(
 				`https://api.geekdo.com/xmlapi2/search?query=${searchQueryText}&type=boardgame,boardgameexpansion&pagesize=10&page=1`
@@ -18,7 +18,7 @@ const Search = (props) => {
 				});
 				let convertedSearchResults = JSON.parse(convertedRes).items.item;
 				let dedupedSearchResults = [];
-				let dedupeDict = {};
+				let dedupedDict = {};
 
 				if (convertedSearchResults) {
 					// for each convSR
@@ -26,9 +26,9 @@ const Search = (props) => {
 					// add the res to dedupSR and id to dict
 					// else dont add.
 					convertedSearchResults.forEach((result) => {
-						if (!dedupeDict[result._attributes.id]) {
+						if (!dedupedDict[result?._attributes?.id]) {
 							dedupedSearchResults.push(result);
-							dedupeDict[result._attributes.id] = true;
+							dedupedDict[result._attributes.id] = true;
 						}
 					});
 				}
@@ -40,11 +40,16 @@ const Search = (props) => {
 	};
 	return (
 		<div>
-			<form onSubmit={searchSubmit}>
-				<input type='text' value={searchQueryText} onChange={handleChange} />
-				<button>
-					<span className='icon'>
-						Search
+			<form onSubmit={searchSubmit} className='search-form'>
+				<input
+					className='searchbar'
+					type='text'
+					value={searchQueryText}
+					onChange={handleChange}
+				/>
+				<button className='search-btn'>
+					<span className='icon'>Search</span>
+					<div className='search-icon-container'>
 						<svg
 							xmlns='http://www.w3.org/2000/svg'
 							className='h-6 w-6'
@@ -59,7 +64,7 @@ const Search = (props) => {
 								d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
 							/>
 						</svg>
-					</span>
+					</div>
 				</button>
 			</form>
 		</div>

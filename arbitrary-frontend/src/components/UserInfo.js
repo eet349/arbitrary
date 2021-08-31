@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { axiosWithAuth } from './axiosWithAuth';
+import { axiosWithAuth } from '../utils/axiosWithAuth';
 import { useHistory } from 'react-router-dom';
 
 const GetUserInfo = (props) => {
@@ -23,9 +23,7 @@ const GetUserInfo = (props) => {
 	}, []);
 
 	const displayHot = () => {
-		console.log('hotresponse: ', props.hotResponse);
 		if (props.hotResponse) {
-			console.log('hotresponse: ', props.hotResponse);
 			return props.hotResponse.map((item) => {
 				return (
 					<div key={item._attributes.id}>{item.name._attributes.value}</div>

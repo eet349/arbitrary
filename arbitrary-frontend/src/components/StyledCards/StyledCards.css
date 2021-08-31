@@ -1,0 +1,11 @@
+.styled-card {
+	width: 20%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: center;
+	margin: 2%;
+	border: 1px solid #ccc;
+	border-radius: 20px;
+	padding: 2%;
+}

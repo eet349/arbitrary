@@ -10,6 +10,5 @@ export const axiosWithAuth = () => {
 			Authorization: `Bearer ${token}`,
 		},
 		baseURL: 'http://localhost:2019',
-		// baseURL: "https://jrmmba-foundation.herokuapp.com",
 	});
 };
