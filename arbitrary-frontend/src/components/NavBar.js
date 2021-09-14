@@ -1,7 +1,7 @@
 import React from 'react';
 
 const NavBar = () => {
-	const navLinkArray = ['home', 'collection', 'register', 'random'];
+	const navLinkArray = ['collection', 'random'];
 	const renderNavLinks = () => {
 		return navLinkArray.map((link) => {
 			return (
@@ -13,7 +13,7 @@ const NavBar = () => {
 	};
 
 	return (
-		<div>
+		<div className='navbar'>
 			<nav>
 				<ul className='navlink-container'>{renderNavLinks()}</ul>
 			</nav>

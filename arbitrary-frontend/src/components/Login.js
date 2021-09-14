@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 import { axiosWithAuth } from '../utils/axiosWithAuth';
 
 const Login = (props) => {
+	const { setIsLoggedIn } = props;
 	const [credentials, setCredentials] = useState({
 		username: '',
 		password: '',
@@ -26,8 +27,8 @@ const Login = (props) => {
 				}
 			)
 			.then((res) => {
-				// console.log(res.data);
 				localStorage.setItem('token', res.data.access_token);
+				setIsLoggedIn(true);
 				axios
 					.get('https://api.geekdo.com/xmlapi2/hot?type=boardgame')
 					.then((res) => {
@@ -62,7 +63,7 @@ const Login = (props) => {
 	return (
 		<>
 			<h2> Please login.</h2>
-			<form onSubmit={login}>
+			<form onSubmit={login} className='form-container'>
 				<label>
 					Username:
 					<input

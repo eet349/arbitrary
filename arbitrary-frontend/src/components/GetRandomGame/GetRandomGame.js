@@ -1,20 +1,28 @@
 import './GetRandomGame.css';
-import { fakeGames } from '../../utils/FakeGames';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import StyledCards from '../StyledCards/StyledCards';
 import '../StyledCards/StyledCardContainer.css';
 
-const GetRandomGame = () => {
+const GetRandomGame = (props) => {
+	const { userCollection } = props;
 	const [randomChosen, setRandomChosen] = useState({});
-	const [filteredGames, setFilteredGames] = useState(fakeGames);
+	const [filteredGames, setFilteredGames] = useState(userCollection);
+	useEffect(() => {
+		setFilteredGames(userCollection);
+	}, [userCollection]);
 
 	const renderGames = () => {
 		return filteredGames.map((game) => {
 			return (
 				<StyledCards
-					key={game._attributes.id}
-					cardInfo={{ name: game.name, id: game._attributes.id }}
-					thumbnail={game.thumbnail._text}
+					key={game.collectableid}
+					cardInfo={{
+						name: game.name,
+						id: game.collectableid,
+						link: game.link,
+					}}
+					thumbnail={game.thumbnail}
+					additionalInfo={{ yearpublished: game.yearpublished }}
 				/>
 			);
 		});
@@ -34,9 +42,9 @@ const GetRandomGame = () => {
 		let selectedNumPlayersInt = parseInt(e.target.value);
 		let newFilteredGames;
 
-		newFilteredGames = fakeGames.filter((game) => {
-			let minPlayersInt = parseInt(game.minplayers);
-			let maxPlayersInt = parseInt(game.maxplayers);
+		newFilteredGames = userCollection.filter((game) => {
+			let minPlayersInt = game.minplayers;
+			let maxPlayersInt = game.maxplayers;
 			return (
 				minPlayersInt <= selectedNumPlayersInt &&
 				selectedNumPlayersInt <= maxPlayersInt
@@ -70,22 +78,30 @@ const GetRandomGame = () => {
 
 	return (
 		<div>
-			<h2>Get Random Game</h2>
-			<select name='numplayers' onChange={(e) => handlePlayerChange(e)}>
+			<h1>Pick a Random Game</h1>
+			<select
+				name='numplayers'
+				className='dropdown'
+				onChange={(e) => handlePlayerChange(e)}
+			>
 				<option value=''>Players</option>
 				{generatePlayerOptions()}
 			</select>
 			<div className='styled-card-container'>{renderGames()}</div>
 			<button onClick={handleRandomClick}>Random</button>
-			{randomChosen && (
-				<StyledCards
-					key={randomChosen?._attributes?.id}
-					cardInfo={{
-						name: randomChosen.name,
-						id: randomChosen?._attributes?.id,
-					}}
-					thumbnail={randomChosen.thumbnail?._text}
-				/>
+			{JSON.stringify(randomChosen) !== JSON.stringify({}) && (
+				<div>
+					<StyledCards
+						key={randomChosen?.collectableid}
+						cardInfo={{
+							name: randomChosen.name,
+							id: randomChosen?.collectableid,
+							link: randomChosen.link,
+						}}
+						thumbnail={randomChosen.thumbnail}
+						additionalInfo={{ yearpublished: randomChosen.yearpublished }}
+					/>
+				</div>
 			)}
 		</div>
 	);

@@ -7,13 +7,14 @@ import StyledCards from './StyledCards/StyledCards';
 import './StyledCards/StyledCardContainer.css';
 
 const SearchResults = (props) => {
-	const [resultThumbnails, setResultThumbnails] = useState({});
+	const [additionalInfo, setAdditionalInfo] = useState({});
+	const [links, setLinks] = useState({});
 
 	useEffect(() => {
-		fetchThumbnails();
+		fetchAdditionalInfo();
 	}, [props.searchResults]);
 
-	const fetchThumbnails = () => {
+	const fetchAdditionalInfo = () => {
 		// make the call, and add it to the list
 		let promiseArray = props.searchResults.map((result) => {
 			return axios.get(
@@ -22,19 +23,28 @@ const SearchResults = (props) => {
 		});
 		Promise.all(promiseArray).then((values) => {
 			let convertedValues = {};
-
+			let convertedLinks = {};
 			values.forEach((value) => {
 				let convertedRes = convert.xml2js(value.data, {
 					compact: true,
 					spaces: 4,
 				});
-				console.log('convertedRes: ', convertedRes);
+
+				let tempAdditionalInfo = convertedRes.items.item;
 				convertedValues = {
 					...convertedValues,
-					[convertedRes.items.item._attributes.id]:
-						convertedRes.items.item.thumbnail?._text,
+					[convertedRes.items.item._attributes.id]: tempAdditionalInfo,
 				};
-				setResultThumbnails(convertedValues);
+				// convert links to convertedLinks
+				let tempLinks = tempAdditionalInfo.link.map((link) => {
+					return { type: link._attributes.type, value: link._attributes.value };
+				});
+				convertedLinks = {
+					...convertedLinks,
+					[convertedRes.items.item._attributes.id]: tempLinks,
+				};
+				setAdditionalInfo(convertedValues);
+				setLinks(convertedLinks);
 			});
 		});
 	};
@@ -48,8 +58,11 @@ const SearchResults = (props) => {
 					cardInfo={{
 						name: result?.name?._attributes?.value,
 						id: result?._attributes?.id,
+						link: `https://boardgamegeek.com/boardgame/${result?._attributes?.id}`,
 					}}
-					thumbnail={resultThumbnails[result?._attributes?.id]}
+					additionalInfo={additionalInfo[result?._attributes?.id]}
+					links={links[result?._attributes?.id]}
+					setUserCollection={props.setUserCollection}
 				/>
 			);
 		});
@@ -57,7 +70,7 @@ const SearchResults = (props) => {
 
 	return (
 		<div className='styled-card-container'>
-			{resultThumbnails && renderResultsList()}
+			{additionalInfo && renderResultsList()}
 		</div>
 	);
 };

@@ -9,7 +9,7 @@ const Search = (props) => {
 		e.preventDefault();
 		axios
 			.get(
-				`https://api.geekdo.com/xmlapi2/search?query=${searchQueryText}&type=boardgame,boardgameexpansion&pagesize=10&page=1`
+				`https://www.boardgamegeek.com/xmlapi2/search?query=${searchQueryText}&type=boardgame,boardgameexpansion&pagesize=10`
 			)
 			.then((res) => {
 				let convertedRes = convert.xml2json(res.data, {
@@ -46,6 +46,7 @@ const Search = (props) => {
 					type='text'
 					value={searchQueryText}
 					onChange={handleChange}
+					autoFocus
 				/>
 				<button className='search-btn'>
 					<span className='icon'>Search</span>

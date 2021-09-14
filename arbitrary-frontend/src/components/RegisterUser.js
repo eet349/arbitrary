@@ -29,7 +29,7 @@ const RegisterUser = () => {
 	};
 
 	return (
-		<div>
+		<div className='register-container container'>
 			<h2>Register</h2>
 			<form onSubmit={handleSubmit}>
 				<label>
