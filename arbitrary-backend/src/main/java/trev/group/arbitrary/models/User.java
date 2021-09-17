@@ -61,6 +61,15 @@ public class User
     private List<Useremail> useremails = new ArrayList<>();
 
     /**
+     * A list of collectables for this user
+     */
+    @OneToOne(cascade = CascadeType.ALL)
+    private UserCollection collection = new UserCollection("collection");
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private UserCollection wishlist = new UserCollection("wishlist");
+
+    /**
      * Part of the join relationship between user and role
      * connects users to the user role combination
      */
@@ -224,6 +233,22 @@ public class User
     public void setRoles(Set<UserRoles> roles)
     {
         this.roles = roles;
+    }
+
+    public UserCollection getCollection() {
+        return collection;
+    }
+
+    public void setCollection(UserCollection collection) {
+        this.collection = collection;
+    }
+
+    public UserCollection getWishlist() {
+        return wishlist;
+    }
+
+    public void setWishlist(UserCollection wishlist) {
+        this.wishlist = wishlist;
     }
 
     /**

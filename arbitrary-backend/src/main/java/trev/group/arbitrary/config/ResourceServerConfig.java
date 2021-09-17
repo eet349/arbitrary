@@ -62,13 +62,16 @@ public class ResourceServerConfig
             .antMatchers(HttpMethod.PUT,
                 "/users/**")
             .hasAnyRole("ADMIN")
+//                .antMatchers(HttpMethod.GET,
+//                "/usercollection/**", "/usercollection/collection/**")
+//            .hasAnyRole("ADMIN", "USER")
             .antMatchers("/users/**",
                 "/useremails/**",
                 "/oauth/revoke-token",
-                "/logout")
+                "/logout", "/usercollection/**")
             .authenticated()
-            .antMatchers("/roles/**")
-            .hasAnyRole("ADMIN")
+            .antMatchers("/roles/**", "/usercollection/**")
+            .hasAnyRole("ADMIN", "USER")
             .anyRequest()
             .denyAll()
             .and()
